@@ -8,6 +8,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import com.Ounzy.OpenBrowser.Screens.Loading
 import java.io.BufferedReader
 import java.io.ByteArrayInputStream
 import java.io.IOException
@@ -19,11 +20,17 @@ fun WebViewPage(URL: String) {
     var backEnabled by remember { mutableStateOf(false) }
     var webView: WebView? = null
     val context = LocalContext.current
+    var showLoading by remember { mutableStateOf(false) }
 
     val adServers = StringBuilder()
     var line: String? = ""
     val inputStream = context.resources.openRawResource(R.raw.adblockserverlist)
     val br = BufferedReader(InputStreamReader(inputStream))
+
+    if (showLoading) {
+        Loading()
+    }
+
     try {
         while (br.readLine().also { line = it } != null) {
             adServers.append(line)
@@ -51,8 +58,10 @@ fun WebViewPage(URL: String) {
             CookieManager.getInstance().setAcceptCookie(true)
 
             webViewClient = object : WebViewClient() {
+
                 override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
                     backEnabled = view.canGoBack()
+                    showLoading = true
                 }
 
                 override fun shouldOverrideUrlLoading(
@@ -62,6 +71,11 @@ fun WebViewPage(URL: String) {
                     val redirect = request?.url?.toString()?.contains("youtube") ?: return false
                     if (redirect) loadUrl("https://bnyro.is-a.dev")
                     return redirect
+                }
+
+                override fun onPageCommitVisible(view: WebView?, url: String?) {
+                    super.onPageCommitVisible(view, url)
+                    showLoading = false
                 }
 
                 override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
