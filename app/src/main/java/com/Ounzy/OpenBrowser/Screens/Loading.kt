@@ -1,16 +1,7 @@
 package com.Ounzy.OpenBrowser.Screens
 
-import android.support.v4.os.IResultReceiver.Default
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -37,13 +28,8 @@ fun Loading() {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Icon(
-                    Icons.Default.Refresh,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .height(100.dp)
-                        .fillMaxWidth(),
-
+                CircularProgressIndicator(
+                    modifier = Modifier.size(100.dp),
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))

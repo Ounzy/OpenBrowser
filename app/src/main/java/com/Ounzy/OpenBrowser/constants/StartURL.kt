@@ -1,3 +1,3 @@
 package com.Ounzy.OpenBrowser.constants
 
-var startURL = "https://s.bnyro.ga"
+const val startUrl = "https://s.bnyro.ga"
