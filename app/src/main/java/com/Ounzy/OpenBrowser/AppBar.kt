@@ -3,6 +3,7 @@ package com.Ounzy.OpenBrowser
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -17,8 +18,10 @@ import com.Ounzy.OpenBrowser.constants.startUrl
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppBar() {
+fun BrowserPage() {
     var domain by remember { mutableStateOf(startUrl) }
+    var browserCommands: BrowserCommands? = null
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -32,7 +35,9 @@ fun AppBar() {
                             imageVector = Icons.Default.Home,
                             contentDescription = null,
                             Modifier.clickable(
-                                onClick = { /* Move to Startsite */ },
+                                onClick = {
+                                    browserCommands?.goHome()
+                                },
                             )
                                 .size(50.dp),
                         )
@@ -40,11 +45,14 @@ fun AppBar() {
                             imageVector = Icons.Default.Refresh,
                             contentDescription = null,
                             Modifier.clickable(
-                                onClick = { /* Refresh site fun */ },
+                                onClick = {
+                                    browserCommands?.refresh()
+                                },
                             )
                                 .size(50.dp),
                         )
                         OutlinedTextField(
+                            modifier = Modifier.padding(bottom = 5.dp, end = 10.dp),
                             value = domain,
                             onValueChange = { domain = it },
                             label = {
@@ -53,7 +61,12 @@ fun AppBar() {
                             keyboardOptions = KeyboardOptions(
                                 imeAction = ImeAction.Go,
                             ),
-                            maxLines = 1
+                            keyboardActions = KeyboardActions(
+                                onGo = {
+                                    browserCommands?.loadUrl(domain)
+                                },
+                            ),
+                            singleLine = true,
                         )
                     }
                 },
@@ -61,9 +74,15 @@ fun AppBar() {
         },
     ) { pV ->
         Box(Modifier.padding(pV)) {
-            WebViewPage(url = domain) {
-                domain = it
-            }
+            WebViewPage(
+                startUrl,
+                setBrowserCommands = {
+                    browserCommands = it
+                },
+                onUrlChanged = { newUrl ->
+                    domain = newUrl
+                },
+            )
         }
     }
 }

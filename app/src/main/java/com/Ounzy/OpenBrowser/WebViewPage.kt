@@ -2,7 +2,6 @@ package com.Ounzy.OpenBrowser
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.util.Log
 import android.view.ViewGroup
 import android.webkit.*
 import androidx.activity.compose.BackHandler
@@ -17,7 +16,8 @@ import java.io.InputStreamReader
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun WebViewPage(
-    url: String,
+    startUrl: String,
+    setBrowserCommands: (BrowserCommands) -> Unit,
     onUrlChanged: (url: String) -> Unit,
 ) {
     var backEnabled by remember { mutableStateOf(false) }
@@ -67,7 +67,7 @@ fun WebViewPage(
                     override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
                         backEnabled = view.canGoBack()
                         showLoading = true
-                        url?.let { it1 -> onUrlChanged(it1) }
+                        if (url != null) onUrlChanged(url)
                     }
 
                     override fun shouldOverrideUrlLoading(
@@ -81,7 +81,6 @@ fun WebViewPage(
 
                     override fun onPageCommitVisible(view: WebView?, url: String?) {
                         super.onPageCommitVisible(view, url)
-
                     }
 
                     override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
@@ -108,18 +107,30 @@ fun WebViewPage(
                         showLoading = false
                     }
                 }
-                loadUrl(url)
+                loadUrl(startUrl)
                 webView = this
+
+                val browserCommands = object : BrowserCommands {
+                    override fun refresh() {
+                        webView?.reload()
+                    }
+
+                    override fun loadUrl(url: String) {
+                        webView?.loadUrl(url)
+                    }
+
+                    override fun goHome() {
+                        webView?.loadUrl(startUrl)
+                    }
+                }
+                setBrowserCommands(browserCommands)
             }
         },
         update = {
             webView = it
-            // it.url?.let { url -> onUrlChanged(url) }
         },
     )
     BackHandler(enabled = backEnabled) {
         webView?.goBack()
     }
-
-    if (errorLoading) WebViewPage(url = loadURL) {}
 }
