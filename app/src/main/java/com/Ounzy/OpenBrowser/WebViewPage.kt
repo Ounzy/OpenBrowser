@@ -2,6 +2,7 @@ package com.Ounzy.OpenBrowser
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.util.Log
 import android.view.ViewGroup
 import android.webkit.*
 import androidx.activity.compose.BackHandler
@@ -98,8 +99,8 @@ fun WebViewPage(
                         error: WebResourceError?,
                     ) {
                         super.onReceivedError(view, request, error)
-                        loadURL = "file:///android_asset/404.html"
-                        errorLoading = true
+                        webView?.loadUrl("file:///android_asset/404.html")
+                        Log.e("Error:", url.toString())
                     }
 
                     override fun onPageFinished(view: WebView?, url: String?) {
