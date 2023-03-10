@@ -10,6 +10,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import com.Ounzy.OpenBrowser.Screens.Loading
+import com.Ounzy.OpenBrowser.database.DBInstance.Db
+import com.Ounzy.OpenBrowser.database.TabDbItem
 import java.io.BufferedReader
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
@@ -69,6 +71,17 @@ fun WebViewPage(
                         backEnabled = view.canGoBack()
                         showLoading = true
                         if (url != null) onUrlChanged(url)
+                        val tabs: List<TabDbItem> = Db.TabDao().getAll()
+                        if (tabs.isNotEmpty()) {
+                            Db.TabDao().delete(tabs[0])
+                            val tabDbItem = TabDbItem(url = url)
+                            Db.TabDao().insert(tabDbItem)
+                            Log.e("Tabs:", Db.TabDao().getAll().toString())
+                        } else {
+                            val tabDbItem = TabDbItem(url = url)
+                            Db.TabDao().insert(tabDbItem)
+                            Log.e("Tabs:", Db.TabDao().getAll().toString())
+                        }
                     }
 
                     override fun shouldOverrideUrlLoading(

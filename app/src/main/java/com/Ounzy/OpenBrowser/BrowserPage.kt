@@ -44,7 +44,7 @@ fun BrowserPage() {
                                 },
                             )
                                 .size(50.dp)
-                                .weight(0.15f)
+                                .weight(0.15f),
                         )
                         Icon(
                             imageVector = Icons.Default.Refresh,
@@ -59,7 +59,7 @@ fun BrowserPage() {
                         )
                         OutlinedTextField(
                             modifier = Modifier
-                                .padding(bottom = 10.dp, )
+                                .padding(bottom = 10.dp)
                                 .height(60.dp)
                                 .width(230.dp)
                                 .weight(0.7f),
@@ -88,7 +88,7 @@ fun BrowserPage() {
                             contentDescription = null,
                             modifier = Modifier
                                 .size(50.dp)
-                                .weight(0.15f)
+                                .weight(0.15f),
                         )
                     }
                 },
