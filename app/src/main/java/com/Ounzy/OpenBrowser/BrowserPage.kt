@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
@@ -18,44 +19,54 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.Ounzy.OpenBrowser.constants.startUrl
+import com.Ounzy.OpenBrowser.Screens.ShowSettings
+import com.Ounzy.OpenBrowser.Screens.TabsList
+import com.Ounzy.OpenBrowser.constants.MainStartUrl
+import com.Ounzy.OpenBrowser.database.DBInstance
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BrowserPage() {
-    var domain by remember { mutableStateOf(startUrl) }
-    var browserCommands: BrowserCommands? = null
+    var domain by remember { mutableStateOf(MainStartUrl) }
+    var browserCommands: BrowserCommands? by remember {
+        mutableStateOf(null)
+    }
+    var showTabs by remember { mutableStateOf(false) }
+    var showSettings by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Row(
-                        Modifier.fillMaxWidth()
+                        Modifier
+                            .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.background),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
                             imageVector = Icons.Default.Home,
                             contentDescription = null,
-                            Modifier.clickable(
-                                onClick = {
-                                    browserCommands?.goHome()
-                                },
-                            )
+                            Modifier
+                                .clickable(
+                                    onClick = {
+                                        browserCommands?.goHome()
+                                    },
+                                )
                                 .size(50.dp)
-                                .weight(0.15f),
+                                .weight(0.1f),
                         )
                         Icon(
                             imageVector = Icons.Default.Refresh,
                             contentDescription = null,
-                            Modifier.clickable(
-                                onClick = {
-                                    browserCommands?.refresh()
-                                },
-                            )
+                            Modifier
+                                .clickable(
+                                    onClick = {
+                                        browserCommands?.refresh()
+                                    },
+                                )
                                 .size(50.dp)
-                                .weight(0.15f),
+                                .weight(0.1f),
                         )
                         OutlinedTextField(
                             modifier = Modifier
@@ -76,7 +87,7 @@ fun BrowserPage() {
                                     if (URLUtil.isValidUrl(domain)) {
                                         browserCommands?.loadUrl(domain)
                                     } else {
-                                        browserCommands?.loadUrl(startUrl + "search?q=" + domain)
+                                        browserCommands?.loadUrl(MainStartUrl + "search?q=" + domain)
                                     }
                                 },
                             ),
@@ -84,11 +95,25 @@ fun BrowserPage() {
                             textStyle = TextStyle(fontSize = 15.sp),
                         )
                         Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(50.dp)
+                                .weight(0.1f)
+                                .clickable(
+                                    onClick = { showTabs = true },
+                                ),
+                        )
+
+                        Icon(
                             imageVector = Icons.Default.MoreVert,
                             contentDescription = null,
                             modifier = Modifier
                                 .size(50.dp)
-                                .weight(0.15f),
+                                .weight(0.1f)
+                                .clickable(
+                                    onClick = { showSettings = true },
+                                ),
                         )
                     }
                 },
@@ -97,7 +122,7 @@ fun BrowserPage() {
     ) { pV ->
         Box(Modifier.padding(pV)) {
             WebViewPage(
-                startUrl,
+                DBInstance.Db.TabDao().getAll().firstOrNull()?.url ?: MainStartUrl,
                 setBrowserCommands = {
                     browserCommands = it
                 },
@@ -105,6 +130,23 @@ fun BrowserPage() {
                     domain = newUrl
                 },
             )
+        }
+    }
+    if (showTabs) {
+        TabsList(
+            onDismissRequest = {
+                showTabs = false
+            },
+            onTabUrlClicked = { index, tabDbItem ->
+                browserCommands?.setSelectedTab(index)
+                tabDbItem.url?.let { browserCommands!!.loadUrl(it) }
+                showTabs = false
+            },
+        )
+    }
+    if (showSettings) {
+        ShowSettings() {
+            showSettings = false
         }
     }
 }

@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 @Entity
 data class TabDbItem(
     @PrimaryKey(autoGenerate = true) val uid: Int = 0,
-    @ColumnInfo(name = "url") val url: String?,
+    @ColumnInfo(name = "url") var url: String?,
 )
+

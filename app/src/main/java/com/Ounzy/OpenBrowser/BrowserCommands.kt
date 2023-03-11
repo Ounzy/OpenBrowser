@@ -6,4 +6,6 @@ interface BrowserCommands {
     fun loadUrl(url: String)
 
     fun goHome()
+
+    fun setSelectedTab(index: Int)
 }

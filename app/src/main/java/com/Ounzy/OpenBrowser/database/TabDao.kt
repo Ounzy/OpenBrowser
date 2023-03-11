@@ -1,9 +1,6 @@
 package com.Ounzy.OpenBrowser.database
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface TabDao {
@@ -18,4 +15,7 @@ interface TabDao {
 
     @Delete
     fun delete(tabDbItem: TabDbItem)
+
+    @Update
+    fun update(tabDbItem: TabDbItem)
 }

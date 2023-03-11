@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import com.Ounzy.OpenBrowser.Screens.Loading
+import com.Ounzy.OpenBrowser.constants.MainStartUrl
 import com.Ounzy.OpenBrowser.database.DBInstance.Db
 import com.Ounzy.OpenBrowser.database.TabDbItem
 import java.io.BufferedReader
@@ -23,6 +24,8 @@ fun WebViewPage(
     setBrowserCommands: (BrowserCommands) -> Unit,
     onUrlChanged: (url: String) -> Unit,
 ) {
+    var openedTab = 0
+
     var backEnabled by remember { mutableStateOf(false) }
     var webView: WebView? = null
     val context = LocalContext.current
@@ -32,10 +35,6 @@ fun WebViewPage(
     var line: String?
     val inputStream = context.resources.openRawResource(R.raw.adblockserverlist)
     val br = BufferedReader(InputStreamReader(inputStream))
-    var errorLoading by remember { mutableStateOf(false) }
-    var loadURL by remember {
-        mutableStateOf("")
-    }
 
     if (showLoading) {
         Loading()
@@ -72,10 +71,10 @@ fun WebViewPage(
                         showLoading = true
                         if (url != null) onUrlChanged(url)
                         val tabs: List<TabDbItem> = Db.TabDao().getAll()
-                        if (tabs.isNotEmpty()) {
-                            Db.TabDao().delete(tabs[0])
-                            val tabDbItem = TabDbItem(url = url)
-                            Db.TabDao().insert(tabDbItem)
+                        if (tabs.size >= openedTab + 1) {
+                            val tabDbItem = tabs[openedTab]
+                            tabDbItem.url = url
+                            Db.TabDao().update(tabDbItem)
                             Log.e("Tabs:", Db.TabDao().getAll().toString())
                         } else {
                             val tabDbItem = TabDbItem(url = url)
@@ -88,7 +87,8 @@ fun WebViewPage(
                         view: WebView?,
                         request: WebResourceRequest?,
                     ): Boolean {
-                        val redirect = request?.url?.toString()?.contains("youtube.com") ?: return false
+                        val redirect =
+                            request?.url?.toString()?.contains("youtube.com") ?: return false
                         if (redirect) loadUrl("https://piped.video")
                         return redirect
                     }
@@ -97,7 +97,10 @@ fun WebViewPage(
                         super.onPageCommitVisible(view, url)
                     }
 
-                    override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
+                    override fun shouldInterceptRequest(
+                        view: WebView,
+                        request: WebResourceRequest,
+                    ): WebResourceResponse? {
                         val empty = ByteArrayInputStream("".toByteArray())
                         val kk5 = adServers.toString()
                         if (kk5.contains(":::::" + request.url.host)) {
@@ -112,8 +115,13 @@ fun WebViewPage(
                         error: WebResourceError?,
                     ) {
                         super.onReceivedError(view, request, error)
-                        webView?.loadUrl("file:///android_asset/404.html")
-                        Log.e("Error:", url.toString())
+                        if (error != null) {
+                            if (error.description.toString().contains("NAME_NOT_RESOLVED")) {
+                                webView?.loadUrl("file:///android_asset/404.html")
+                            } else {
+                                return
+                            }
+                        }
                     }
 
                     override fun onPageFinished(view: WebView?, url: String?) {
@@ -134,7 +142,12 @@ fun WebViewPage(
                     }
 
                     override fun goHome() {
-                        webView?.loadUrl(startUrl)
+                        webView?.loadUrl(MainStartUrl)
+                        Log.e("startUrl;", MainStartUrl)
+                    }
+
+                    override fun setSelectedTab(index: Int) {
+                        openedTab = index
                     }
                 }
                 setBrowserCommands(browserCommands)
