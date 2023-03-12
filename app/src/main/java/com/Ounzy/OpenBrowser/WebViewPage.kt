@@ -143,7 +143,6 @@ fun WebViewPage(
 
                     override fun goHome() {
                         webView?.loadUrl(MainStartUrl)
-                        Log.e("startUrl;", MainStartUrl)
                     }
 
                     override fun setSelectedTab(index: Int) {

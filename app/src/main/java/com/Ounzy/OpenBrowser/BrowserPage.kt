@@ -7,10 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,6 +20,7 @@ import com.Ounzy.OpenBrowser.Screens.ShowSettings
 import com.Ounzy.OpenBrowser.Screens.TabsList
 import com.Ounzy.OpenBrowser.constants.MainStartUrl
 import com.Ounzy.OpenBrowser.database.DBInstance
+import com.Ounzy.OpenBrowser.database.TabDbItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,6 +92,18 @@ fun BrowserPage() {
                             singleLine = true,
                             textStyle = TextStyle(fontSize = 15.sp),
                         )
+
+                        Icon(
+                            imageVector = Icons.Default.ShoppingCart,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(50.dp)
+                                .weight(0.1f)
+                                .clickable(
+                                    onClick = { showTabs = true },
+                                ),
+                        )
+
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = null,
@@ -101,7 +111,11 @@ fun BrowserPage() {
                                 .size(50.dp)
                                 .weight(0.1f)
                                 .clickable(
-                                    onClick = { showTabs = true },
+                                    onClick = {
+                                        browserCommands?.loadUrl(MainStartUrl)
+                                        val tabDbItem = TabDbItem(url = domain)
+                                        DBInstance.Db.TabDao().insert(tabDbItem)
+                                    },
                                 ),
                         )
 

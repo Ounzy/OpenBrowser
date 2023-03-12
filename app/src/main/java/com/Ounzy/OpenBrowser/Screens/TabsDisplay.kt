@@ -4,8 +4,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -19,8 +25,12 @@ import com.Ounzy.OpenBrowser.database.TabDbItem
 @Composable
 fun TabsList(
     onDismissRequest: () -> Unit,
-    onTabUrlClicked: (index: Int, tabDbItem: TabDbItem) -> Unit
+    onTabUrlClicked: (index: Int, tabDbItem: TabDbItem) -> Unit,
 ) {
+    val tabList = remember {
+        DBInstance.Db.TabDao().getAll().toMutableStateList()
+    }
+
     Dialog(
         onDismissRequest = onDismissRequest,
         properties = DialogProperties(usePlatformDefaultWidth = false),
@@ -42,21 +52,27 @@ fun TabsList(
             Box(modifier = Modifier.padding(pV)) {
                 LazyColumn(Modifier.fillMaxWidth()) {
                     // DBInstance.Db.TabDao().insert(TabDbItem(url = "https://piped.video"))
-                    val tabList: List<TabDbItem> = DBInstance.Db.TabDao().getAll()
-                    item {
-                        var browserCommands: BrowserCommands? = null
-                        tabList.forEachIndexed { index, tabDbItem ->
-                            ElevatedCard(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(12.dp, 12.dp)
-                                    .clickable(
-                                        onClick = {
-                                            onTabUrlClicked(index, tabDbItem)
-                                        }
-                                    )
+                    itemsIndexed(tabList) { index, tabDbItem ->
+                        ElevatedCard(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp, 12.dp)
+                                .clickable(
+                                    onClick = {
+                                        onTabUrlClicked(index, tabDbItem)
+                                    },
+                                ),
+
+                        ) {
+                            Row(
+                                Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                LazyRow(Modifier.fillMaxWidth()) {
+                                LazyRow(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f),
+                                ) {
                                     item {
                                         Text(
                                             tabDbItem.url.toString(),
@@ -64,6 +80,19 @@ fun TabsList(
                                         )
                                     }
                                 }
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = null,
+                                    Modifier
+                                        .weight(0.15f)
+                                        .size(30.dp)
+                                        .clickable(
+                                            onClick = {
+                                                DBInstance.Db.TabDao().delete(tabDbItem)
+                                                tabList.removeAt(index)
+                                            },
+                                        ),
+                                )
                             }
                         }
                     }
