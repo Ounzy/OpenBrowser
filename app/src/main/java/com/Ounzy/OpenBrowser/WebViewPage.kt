@@ -10,9 +10,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import com.Ounzy.OpenBrowser.Screens.Loading
-import com.Ounzy.OpenBrowser.constants.MainStartUrl
+import com.Ounzy.OpenBrowser.constants.mainStartUrl
+import com.Ounzy.OpenBrowser.database.DBInstance
 import com.Ounzy.OpenBrowser.database.DBInstance.Db
-import com.Ounzy.OpenBrowser.database.TabDbItem
+import com.Ounzy.OpenBrowser.database.OpenedTab.OpenedTabInt
+import com.Ounzy.OpenBrowser.database.TabDBItem.TabDbItem
 import java.io.BufferedReader
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
@@ -24,7 +26,7 @@ fun WebViewPage(
     setBrowserCommands: (BrowserCommands) -> Unit,
     onUrlChanged: (url: String) -> Unit,
 ) {
-    var openedTab = 0
+    var openedTab = DBInstance.Db.openedTabIntDao().getAll()[0].openedTabInt
 
     var backEnabled by remember { mutableStateOf(false) }
     var webView: WebView? = null
@@ -69,17 +71,34 @@ fun WebViewPage(
                     override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
                         backEnabled = view.canGoBack()
                         showLoading = true
-                        if (url != null) onUrlChanged(url)
-                        val tabs: List<TabDbItem> = Db.TabDao().getAll()
-                        if (tabs.size >= openedTab + 1) {
-                            val tabDbItem = tabs[openedTab]
-                            tabDbItem.url = url
-                            Db.TabDao().update(tabDbItem)
-                            Log.e("Tabs:", Db.TabDao().getAll().toString())
+                        if (Db.openedTabIntDao().getAll().isEmpty()) {
+                            val openedTabInt = OpenedTabInt(0, openedTab.toInt())
+                            DBInstance.Db.openedTabIntDao().add(openedTabInt)
+                            if (url != null) onUrlChanged(url)
+                            val tabs: List<TabDbItem> = Db.TabDao().getAll()
+                            if (tabs.size >= openedTab + 1) {
+                                Log.e("Openedtab:", openedTab.toString())
+                                val tabDbItem = tabs[openedTab]
+                                tabDbItem.url = url
+                                Db.TabDao().update(tabDbItem)
+                            } else {
+                                val tabDbItem = TabDbItem(url = url)
+                                Db.TabDao().insert(tabDbItem)
+                            }
                         } else {
-                            val tabDbItem = TabDbItem(url = url)
-                            Db.TabDao().insert(tabDbItem)
-                            Log.e("Tabs:", Db.TabDao().getAll().toString())
+                            val openedTabInt = OpenedTabInt(0, openedTab.toInt())
+                            DBInstance.Db.openedTabIntDao().update(openedTabInt)
+                            Log.e("else:", DBInstance.Db.openedTabIntDao().getAll()[0].toString())
+                            if (url != null) onUrlChanged(url)
+                            val tabs: List<TabDbItem> = Db.TabDao().getAll()
+                            if (tabs.size >= openedTab + 1) {
+                                val tabDbItem = tabs[openedTab]
+                                tabDbItem.url = url
+                                Db.TabDao().update(tabDbItem)
+                            } else {
+                                val tabDbItem = TabDbItem(url = url)
+                                Db.TabDao().insert(tabDbItem)
+                            }
                         }
                     }
 
@@ -142,7 +161,7 @@ fun WebViewPage(
                     }
 
                     override fun goHome() {
-                        webView?.loadUrl(MainStartUrl)
+                        webView?.loadUrl(mainStartUrl)
                     }
 
                     override fun setSelectedTab(index: Int) {

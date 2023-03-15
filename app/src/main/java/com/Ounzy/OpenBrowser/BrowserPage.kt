@@ -18,14 +18,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.Ounzy.OpenBrowser.Screens.ShowSettings
 import com.Ounzy.OpenBrowser.Screens.TabsList
-import com.Ounzy.OpenBrowser.constants.MainStartUrl
+import com.Ounzy.OpenBrowser.constants.mainStartUrl
 import com.Ounzy.OpenBrowser.database.DBInstance
-import com.Ounzy.OpenBrowser.database.TabDbItem
+import com.Ounzy.OpenBrowser.database.TabDBItem.TabDbItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BrowserPage() {
-    var domain by remember { mutableStateOf(MainStartUrl) }
+    var domain by remember { mutableStateOf(mainStartUrl) }
     var browserCommands: BrowserCommands? by remember {
         mutableStateOf(null)
     }
@@ -85,7 +85,7 @@ fun BrowserPage() {
                                     if (URLUtil.isValidUrl(domain)) {
                                         browserCommands?.loadUrl(domain)
                                     } else {
-                                        browserCommands?.loadUrl(MainStartUrl + "search?q=" + domain)
+                                        browserCommands?.loadUrl(mainStartUrl + "search?q=" + domain)
                                     }
                                 },
                             ),
@@ -94,7 +94,7 @@ fun BrowserPage() {
                         )
 
                         Icon(
-                            imageVector = Icons.Default.ShoppingCart,
+                            imageVector = Icons.Default.List,
                             contentDescription = null,
                             modifier = Modifier
                                 .size(50.dp)
@@ -112,7 +112,7 @@ fun BrowserPage() {
                                 .weight(0.1f)
                                 .clickable(
                                     onClick = {
-                                        browserCommands?.loadUrl(MainStartUrl)
+                                        browserCommands?.loadUrl(mainStartUrl)
                                         val tabDbItem = TabDbItem(url = domain)
                                         DBInstance.Db.TabDao().insert(tabDbItem)
                                     },
@@ -135,8 +135,9 @@ fun BrowserPage() {
         },
     ) { pV ->
         Box(Modifier.padding(pV)) {
+            val openedTab = DBInstance.Db.openedTabIntDao().getAll()[0].openedTabInt
             WebViewPage(
-                DBInstance.Db.TabDao().getAll().firstOrNull()?.url ?: MainStartUrl,
+                DBInstance.Db.TabDao().getAll()[openedTab].url ?: mainStartUrl,
                 setBrowserCommands = {
                     browserCommands = it
                 },

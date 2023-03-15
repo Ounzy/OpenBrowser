@@ -6,12 +6,11 @@ import androidx.compose.ui.window.DialogProperties
 
 @Composable
 fun ShowSettings(
-    onDismissRequest: () -> Unit
-){
+    onDismissRequest: () -> Unit,
+) {
     Dialog(
         onDismissRequest = onDismissRequest,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+        properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
-        
     }
 }

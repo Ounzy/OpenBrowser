@@ -1,4 +1,4 @@
-package com.Ounzy.OpenBrowser.database
+package com.Ounzy.OpenBrowser.database.TabDBItem
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

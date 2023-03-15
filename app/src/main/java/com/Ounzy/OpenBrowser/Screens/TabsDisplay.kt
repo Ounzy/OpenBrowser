@@ -17,9 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.Ounzy.OpenBrowser.BrowserCommands
 import com.Ounzy.OpenBrowser.database.DBInstance
-import com.Ounzy.OpenBrowser.database.TabDbItem
+import com.Ounzy.OpenBrowser.database.TabDBItem.TabDbItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
