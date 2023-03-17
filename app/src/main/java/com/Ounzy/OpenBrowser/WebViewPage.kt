@@ -1,4 +1,4 @@
-package com.Ounzy.OpenBrowser
+package com.Ounzy.OpenBrowser // ktlint-disable package-name
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
@@ -26,7 +26,7 @@ fun WebViewPage(
     setBrowserCommands: (BrowserCommands) -> Unit,
     onUrlChanged: (url: String) -> Unit,
 ) {
-    var openedTab = DBInstance.Db.openedTabIntDao().getAll()[0].openedTabInt
+    var openedTab = Db.openedTabIntDao().getAll().firstOrNull()?.openedTabInt ?: 0
 
     var backEnabled by remember { mutableStateOf(false) }
     var webView: WebView? = null
@@ -72,7 +72,7 @@ fun WebViewPage(
                         backEnabled = view.canGoBack()
                         showLoading = true
                         if (Db.openedTabIntDao().getAll().isEmpty()) {
-                            val openedTabInt = OpenedTabInt(0, openedTab.toInt())
+                            val openedTabInt = OpenedTabInt(0, openedTab)
                             DBInstance.Db.openedTabIntDao().add(openedTabInt)
                             if (url != null) onUrlChanged(url)
                             val tabs: List<TabDbItem> = Db.TabDao().getAll()
@@ -86,7 +86,7 @@ fun WebViewPage(
                                 Db.TabDao().insert(tabDbItem)
                             }
                         } else {
-                            val openedTabInt = OpenedTabInt(0, openedTab.toInt())
+                            val openedTabInt = OpenedTabInt(0, openedTab)
                             DBInstance.Db.openedTabIntDao().update(openedTabInt)
                             Log.e("else:", DBInstance.Db.openedTabIntDao().getAll()[0].toString())
                             if (url != null) onUrlChanged(url)

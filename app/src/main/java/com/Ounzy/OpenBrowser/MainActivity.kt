@@ -7,14 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.Ounzy.OpenBrowser.database.DBInstance
 import com.Ounzy.OpenBrowser.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        DBInstance.init(applicationContext)
 
         setContent {
             MyApplicationTheme {

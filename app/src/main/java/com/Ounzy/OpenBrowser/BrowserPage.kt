@@ -135,9 +135,9 @@ fun BrowserPage() {
         },
     ) { pV ->
         Box(Modifier.padding(pV)) {
-            val openedTab = DBInstance.Db.openedTabIntDao().getAll()[0].openedTabInt
+            val openedTab = DBInstance.Db.openedTabIntDao().getAll().firstOrNull()?.openedTabInt
             WebViewPage(
-                DBInstance.Db.TabDao().getAll()[openedTab].url ?: mainStartUrl,
+                openedTab?.let { index -> DBInstance.Db.TabDao().getAll().getOrNull(index)?.url } ?: mainStartUrl,
                 setBrowserCommands = {
                     browserCommands = it
                 },
