@@ -18,49 +18,126 @@ import com.Ounzy.OpenBrowser.Preferences
 fun themedetails(
     onDismissRequest: () -> Unit,
 ) {
-    Dialog(
+    var restart by remember {
+        mutableStateOf(false)
+    }
+
+    AlertDialog(
         onDismissRequest = onDismissRequest,
         properties = DialogProperties(
             usePlatformDefaultWidth = false
         ),
             ) {
-                Scaffold(
-                    modifier = Modifier
-                        .width(250.dp)
-                        .height(300.dp)
-                        .padding(20.dp, 20.dp),
-                    topBar = {
-                        Row(Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            TopAppBar(
-                                title = { Text(text = "Theme") },
-                            )
-                        }
-                    },
-                ) { paddingValues ->
-                    Box(modifier = Modifier.padding(paddingValues)) {
-                        LazyColumn(Modifier.fillMaxWidth()) {
-                            item {
-                                var darkGreenTheme by remember {
-                                    mutableStateOf(Preferences.instance.getString(Preferences.themeModePrefKey, "") == "green")
-                                }
-                                Row(
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(10.dp, 10.dp),
-                                    horizontalArrangement = Arrangement.Center,
-                                    verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                    Text(text = "GreenDark")
-                                    Checkbox(checked = darkGreenTheme, onCheckedChange = {
-                                        darkGreenTheme = it
-                                        val newValue = if (it) "green" else ""
-                                        Preferences.instance.edit()
-                                            .putString(Preferences.themeModePrefKey, newValue).apply()
-                                    })
-                                }
+        ElevatedCard() {
+            Scaffold(
+                modifier = Modifier
+                    .width(250.dp)
+                    .height(300.dp)
+                    .padding(),
+                topBar = {
+                    TopAppBar(
+                            title = { Text(text = "Theme") },
+                        )
+                },
+            ) { paddingValues ->
+                Box(modifier = Modifier.padding(paddingValues)) {
+                    LazyColumn(
+                        Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        item {
+                            var darkGreenTheme by remember {
+                                mutableStateOf(Preferences.instance.getString(Preferences.themeModePrefKey, "") == "green")
+                            }
+                            var darkTheme by remember {
+                                mutableStateOf(Preferences.instance.getString(Preferences.themeModePrefKey, "") == "dark")
+                            }
+                            var lightTheme by remember {
+                                mutableStateOf(Preferences.instance.getString(Preferences.themeModePrefKey, "") == "light")
+                            }
+                            var materialTheme by remember {
+                                mutableStateOf(Preferences.instance.getString(Preferences.themeModePrefKey, "") == "materialTheme")
+                            }
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(0.dp, 0.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = "System")
+                                Checkbox(checked = materialTheme, onCheckedChange = {
+                                    materialTheme = it
+                                    val newValue = if (it) "materialTheme" else ""
+                                    Preferences.instance.edit()
+                                        .putString(Preferences.themeModePrefKey, newValue)
+                                        .apply()
+                                    darkGreenTheme = false
+                                    darkTheme = false
+                                    lightTheme = false
+                                    restart = true
+                                })
+                            }
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(0.dp, 0.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = "Light")
+                                Checkbox(checked = lightTheme, onCheckedChange = {
+                                    lightTheme = it
+                                    val newValue = if (it) "light" else ""
+                                    Preferences.instance.edit()
+                                        .putString(Preferences.themeModePrefKey, newValue)
+                                        .apply()
+                                    darkGreenTheme = false
+                                    darkTheme = false
+                                    materialTheme = false
+                                    restart = true
+                                })
+                            }
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(0.dp, 0.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = "Dark")
+                                Checkbox(checked = darkTheme, onCheckedChange = {
+                                    darkTheme = it
+                                    val newValue = if (it) "dark" else ""
+                                    Preferences.instance.edit()
+                                        .putString(Preferences.themeModePrefKey, newValue)
+                                        .apply()
+                                    darkGreenTheme = false
+                                    lightTheme = false
+                                    materialTheme = false
+                                    restart = true
+                                })
+                            }
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(0.dp, 0.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = "DarkGreen")
+                                Checkbox(checked = darkGreenTheme, onCheckedChange = {
+                                    darkGreenTheme = it
+                                    val newValue = if (it) "green" else ""
+                                    Preferences.instance.edit()
+                                        .putString(Preferences.themeModePrefKey, newValue)
+                                        .apply()
+                                    darkTheme = false
+                                    lightTheme = false
+                                    materialTheme = false
+                                    restart = true
+                                })
                             }
                         }
                     }
@@ -68,6 +145,42 @@ fun themedetails(
             }
         }
 
+    }
+    if (restart) restartPhone {
+        restart = false
+    }
+}
 
 
 
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun restartPhone(
+    onDismissRequest: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        ),
+    ) {
+        Scaffold(
+            modifier = Modifier
+                .height(0.dp)
+                .width(0.dp)
+                .padding(20.dp, 20.dp),
+            containerColor = MaterialTheme.colorScheme.surface
+            ) { paddingValues ->
+            Box(modifier = Modifier.padding(paddingValues)) {
+                Dialog(onDismissRequest = onDismissRequest) {
+                    Text(
+                        text = "Restart your phone to apply new theme",
+                        color = MaterialTheme.colorScheme.primary
+                        )
+                }
+            }
+        }
+    }
+}

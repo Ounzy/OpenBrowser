@@ -3,12 +3,10 @@ package com.Ounzy.OpenBrowser.Screens
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.Ounzy.OpenBrowser.Screens.Theme.themedetails
@@ -31,7 +29,10 @@ fun ShowSettings(
                             Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center,
                         ) {
-                            Text("Settings")
+                            Text(
+                                "Settings",
+                                color = MaterialTheme.colorScheme.primary
+                            )
                         }
                     },
                 )
@@ -40,13 +41,18 @@ fun ShowSettings(
             Box(modifier = Modifier.padding(paddingValues)) {
                 LazyColumn(Modifier.fillMaxWidth()) {
                     item {
-                        Row(Modifier.fillMaxWidth()) {
-                            Text(
-                                text = "Theme",
-                                Modifier.clickable(
-                                    onClick = { showThemeDetails = true },
-                                ),
-                            )
+                        ElevatedCard(
+                            Modifier.clickable(
+                                onClick = { showThemeDetails = true }
+                        )
+                                .padding(5.dp, 10.dp),
+                        ) {
+                            Row(Modifier.fillMaxWidth()) {
+                                Text(
+                                    text = "Theme",
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
                 }

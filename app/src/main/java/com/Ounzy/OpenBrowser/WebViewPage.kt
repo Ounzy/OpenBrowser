@@ -2,7 +2,6 @@ package com.Ounzy.OpenBrowser // ktlint-disable package-name
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.util.Log
 import android.view.ViewGroup
 import android.webkit.*
 import androidx.activity.compose.BackHandler
@@ -77,7 +76,6 @@ fun WebViewPage(
                             if (url != null) onUrlChanged(url)
                             val tabs: List<TabDbItem> = Db.TabDao().getAll()
                             if (tabs.size >= openedTab + 1) {
-                                Log.e("Openedtab:", openedTab.toString())
                                 val tabDbItem = tabs[openedTab]
                                 tabDbItem.url = url
                                 Db.TabDao().update(tabDbItem)
@@ -88,7 +86,6 @@ fun WebViewPage(
                         } else {
                             val openedTabInt = OpenedTabInt(0, openedTab)
                             DBInstance.Db.openedTabIntDao().update(openedTabInt)
-                            Log.e("else:", DBInstance.Db.openedTabIntDao().getAll()[0].toString())
                             if (url != null) onUrlChanged(url)
                             val tabs: List<TabDbItem> = Db.TabDao().getAll()
                             if (tabs.size >= openedTab + 1) {

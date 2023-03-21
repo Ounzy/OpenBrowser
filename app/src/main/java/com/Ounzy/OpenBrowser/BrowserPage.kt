@@ -53,6 +53,7 @@ fun BrowserPage() {
                                 )
                                 .size(50.dp)
                                 .weight(0.1f),
+                            tint = MaterialTheme.colorScheme.secondary
                         )
                         Icon(
                             imageVector = Icons.Default.Refresh,
@@ -65,6 +66,7 @@ fun BrowserPage() {
                                 )
                                 .size(50.dp)
                                 .weight(0.1f),
+                            tint = MaterialTheme.colorScheme.secondary
                         )
                         OutlinedTextField(
                             modifier = Modifier
@@ -102,6 +104,7 @@ fun BrowserPage() {
                                 .clickable(
                                     onClick = { showTabs = true },
                                 ),
+                            tint = MaterialTheme.colorScheme.secondary
                         )
 
                         Icon(
@@ -117,6 +120,7 @@ fun BrowserPage() {
                                         DBInstance.Db.TabDao().insert(tabDbItem)
                                     },
                                 ),
+                            tint = MaterialTheme.colorScheme.secondary
                         )
 
                         Icon(
@@ -128,6 +132,7 @@ fun BrowserPage() {
                                 .clickable(
                                     onClick = { showSettings = true },
                                 ),
+                            tint = MaterialTheme.colorScheme.secondary
                         )
                     }
                 },
