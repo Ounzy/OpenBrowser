@@ -144,6 +144,7 @@ fun WebViewPage(
                         super.onPageFinished(view, url)
                         showLoading = false
                     }
+
                 }
                 loadUrl(startUrl)
                 webView = this

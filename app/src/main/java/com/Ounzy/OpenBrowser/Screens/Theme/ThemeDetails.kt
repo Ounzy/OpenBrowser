@@ -36,15 +36,20 @@ fun themedetails(
                     .padding(),
                 topBar = {
                     TopAppBar(
-                            title = { Text(text = "Theme") },
+                            title = {
+                                Row(
+                                    Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Center
+                                ){
+                                    Text(text = "Theme")
+                                }
+                            },
                         )
                 },
             ) { paddingValues ->
                 Box(modifier = Modifier.padding(paddingValues)) {
                     LazyColumn(
                         Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
                     ) {
                         item {
                             var darkGreenTheme by remember {
@@ -66,18 +71,30 @@ fun themedetails(
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(text = "System")
-                                Checkbox(checked = materialTheme, onCheckedChange = {
-                                    materialTheme = it
-                                    val newValue = if (it) "materialTheme" else ""
-                                    Preferences.instance.edit()
-                                        .putString(Preferences.themeModePrefKey, newValue)
-                                        .apply()
-                                    darkGreenTheme = false
-                                    darkTheme = false
-                                    lightTheme = false
-                                    restart = true
-                                })
+                                Row(
+                                    Modifier.weight(0.3f),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(text = "System")
+                                }
+                                Row(
+                                    Modifier.weight(0.1f),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Checkbox(checked = materialTheme, onCheckedChange = {
+                                        materialTheme = it
+                                        val newValue = if (it) "materialTheme" else ""
+                                        Preferences.instance.edit()
+                                            .putString(Preferences.themeModePrefKey, newValue)
+                                            .apply()
+                                        darkGreenTheme = false
+                                        darkTheme = false
+                                        lightTheme = false
+                                        restart = true
+                                    })
+                                }
                             }
                             Row(
                                 Modifier
@@ -86,18 +103,30 @@ fun themedetails(
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(text = "Light")
-                                Checkbox(checked = lightTheme, onCheckedChange = {
-                                    lightTheme = it
-                                    val newValue = if (it) "light" else ""
-                                    Preferences.instance.edit()
-                                        .putString(Preferences.themeModePrefKey, newValue)
-                                        .apply()
-                                    darkGreenTheme = false
-                                    darkTheme = false
-                                    materialTheme = false
-                                    restart = true
-                                })
+                                Row(
+                                    Modifier.weight(0.3f),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(text = "Light")
+                                }
+                                Row(
+                                    Modifier.weight(0.1f),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Checkbox(checked = lightTheme, onCheckedChange = {
+                                        lightTheme = it
+                                        val newValue = if (it) "light" else ""
+                                        Preferences.instance.edit()
+                                            .putString(Preferences.themeModePrefKey, newValue)
+                                            .apply()
+                                        darkGreenTheme = false
+                                        darkTheme = false
+                                        materialTheme = false
+                                        restart = true
+                                    })
+                                }
                             }
                             Row(
                                 Modifier
@@ -106,18 +135,30 @@ fun themedetails(
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(text = "Dark")
-                                Checkbox(checked = darkTheme, onCheckedChange = {
-                                    darkTheme = it
-                                    val newValue = if (it) "dark" else ""
-                                    Preferences.instance.edit()
-                                        .putString(Preferences.themeModePrefKey, newValue)
-                                        .apply()
-                                    darkGreenTheme = false
-                                    lightTheme = false
-                                    materialTheme = false
-                                    restart = true
-                                })
+                                Row(
+                                    Modifier.weight(0.3f),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(text = "Dark")
+                                }
+                                Row(
+                                    Modifier.weight(0.1f),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Checkbox(checked = darkTheme, onCheckedChange = {
+                                        darkTheme = it
+                                        val newValue = if (it) "dark" else ""
+                                        Preferences.instance.edit()
+                                            .putString(Preferences.themeModePrefKey, newValue)
+                                            .apply()
+                                        darkGreenTheme = false
+                                        lightTheme = false
+                                        materialTheme = false
+                                        restart = true
+                                    })
+                                }
                             }
                             Row(
                                 Modifier
@@ -126,18 +167,30 @@ fun themedetails(
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(text = "DarkGreen")
-                                Checkbox(checked = darkGreenTheme, onCheckedChange = {
-                                    darkGreenTheme = it
-                                    val newValue = if (it) "green" else ""
-                                    Preferences.instance.edit()
-                                        .putString(Preferences.themeModePrefKey, newValue)
-                                        .apply()
-                                    darkTheme = false
-                                    lightTheme = false
-                                    materialTheme = false
-                                    restart = true
-                                })
+                                Row(
+                                    Modifier.weight(0.3f),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(text = "DarkGreen")
+                                }
+                                Row(
+                                    Modifier.weight(0.1f),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Checkbox(checked = darkGreenTheme, onCheckedChange = {
+                                        darkGreenTheme = it
+                                        val newValue = if (it) "green" else ""
+                                        Preferences.instance.edit()
+                                            .putString(Preferences.themeModePrefKey, newValue)
+                                            .apply()
+                                        darkTheme = false
+                                        lightTheme = false
+                                        materialTheme = false
+                                        restart = true
+                                    })
+                                }
                             }
                         }
                     }
