@@ -1,13 +1,23 @@
 package com.Ounzy.OpenBrowser // ktlint-disable package-name
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.graphics.Bitmap
 import android.view.ViewGroup
 import android.webkit.*
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.Ounzy.OpenBrowser.Screens.Loading
 import com.Ounzy.OpenBrowser.constants.mainStartUrl
 import com.Ounzy.OpenBrowser.database.DBInstance
@@ -26,6 +36,10 @@ fun WebViewPage(
     onUrlChanged: (url: String) -> Unit,
 ) {
     var openedTab = Db.openedTabIntDao().getAll().firstOrNull()?.openedTabInt ?: 0
+    val browserModel: BrowserModel = viewModel()
+    var browserCommands1: BrowserCommands? by remember {
+        mutableStateOf(null)
+    }
 
     var backEnabled by remember { mutableStateOf(false) }
     var webView: WebView? = null
@@ -149,6 +163,11 @@ fun WebViewPage(
                 loadUrl(startUrl)
                 webView = this
 
+                (context as Activity).registerForContextMenu(webView)
+                browserModel.getHitTestResult = {
+                    webView?.hitTestResult
+                }
+
                 val browserCommands = object : BrowserCommands {
                     override fun refresh() {
                         webView?.reload()
@@ -167,6 +186,7 @@ fun WebViewPage(
                     }
                 }
                 setBrowserCommands(browserCommands)
+                browserCommands1 = browserCommands
             }
         },
         update = {
@@ -175,5 +195,50 @@ fun WebViewPage(
     )
     BackHandler(enabled = backEnabled) {
         webView?.goBack()
+    }
+
+    browserModel.linkDialogUrl?.let {
+        AlertDialog(
+            onDismissRequest = { browserModel.linkDialogUrl = null },
+            confirmButton = {
+                TextButton(onClick = { browserModel.linkDialogUrl = null }) {
+                    Text(text = "Okay")
+                }
+            },
+            text = {
+                Column(
+                    Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Open in new tab",
+                        Modifier.clickable(
+                            onClick = {
+                                browserCommands1?.loadUrl(it)
+                                val tabDbItem = TabDbItem(url = it)
+                                DBInstance.Db
+                                    .TabDao()
+                                    .insert(tabDbItem)
+                                browserModel.linkDialogUrl = null
+                            }
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = "Open in new tab in background",
+                        Modifier.clickable(
+                            onClick = {
+                                val tabDbItem = TabDbItem(url = it)
+                                DBInstance.Db
+                                    .TabDao()
+                                    .insert(tabDbItem)
+                                browserModel.linkDialogUrl = null
+                            }
+                        )
+                    )
+                }
+            }
+        )
     }
 }
